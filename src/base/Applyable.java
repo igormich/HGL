@@ -1,9 +1,10 @@
 package base;
 
+
 public interface Applyable {
+	void apply();
 
-	public abstract void apply();
-
-	public abstract void unApply();
-
+	default void unApply(){
+		
+	}
 }

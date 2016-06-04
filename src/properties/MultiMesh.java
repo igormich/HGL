@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import base.Object3d;
+import base.RenderContex;
 import materials.Material;
 import materials.MaterialLibrary;
 

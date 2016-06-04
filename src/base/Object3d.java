@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import properties.Property3d;
-import properties.RenderContex;
 
 public class Object3d{
 	private Position position = new Position(this);
@@ -43,7 +42,8 @@ public class Object3d{
 				throw new IllegalStateException("Recursive hierarchy");
 			nextParent=nextParent.getParent();
 		}
-		this.parent.removeChild(this);
+		if(this.parent!=null)
+			this.parent.removeChild(this);
 		this.parent=parent;
 	}
 
@@ -102,8 +102,8 @@ public class Object3d{
 		position.unApply();
 	}
 
-
 	public static void main(String[] args) {
+		
 		Object3d object3d=new Object3d();
 	}
 

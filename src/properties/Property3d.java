@@ -1,6 +1,7 @@
 package properties;
 
 import base.Object3d;
+import base.RenderContex;
 
 public interface Property3d {
 	default boolean isUnique() {

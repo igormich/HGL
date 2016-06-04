@@ -29,7 +29,7 @@ public class Position implements Applyable {
 		return (float) Math.sqrt((v1.x-v2.x)*(v1.x-v2.x)+(v1.y-v2.y)*(v1.y-v2.y)+(v1.z-v2.z)*(v1.z-v2.z));
 	}
 	
-	private boolean cached=false;
+	private boolean cashed=false;
 	private FloatBuffer cash=BufferUtils.createFloatBuffer(16);
 	
 	private Matrix4f matrix=new Matrix4f();
@@ -54,11 +54,12 @@ public class Position implements Applyable {
 	}
 	private void cache() {
 		matrix.store(cash);	
-		cached=true;
+		cash.flip();
+		cashed=true;
 	}
 	
 	private void invalidate() {
-		cached=false;;
+		cashed=false;;
 	}
 	
 	//rotate operations
@@ -169,20 +170,7 @@ public class Position implements Applyable {
 	public Vector3f getScale() {
 		return new Vector3f(scale);
 	}
-	@Override
-	public void apply() {
-		if(!cached)
-			cache();
-		glPushMatrix();
-		if(isAbsolyte())
-			glLoadIdentity();
-		glMultMatrix(cash);	
-	}
-
-	@Override
-	public void unApply() {
-		glPopMatrix();
-	}
+	
 	
 	public float gistanceTo(Object3d object) {
 		return gistanceTo(object.getPosition());
@@ -195,7 +183,7 @@ public class Position implements Applyable {
 		return new Vector3f(m.m30,m.m31,m.m32);
 	}
 
-	private Matrix4f getAbsoluteMatrix() {
+	public Matrix4f getAbsoluteMatrix() {
 		if(isAbsolyte()){
 			return new Matrix4f(matrix);
 		}
@@ -210,10 +198,29 @@ public class Position implements Applyable {
 		return result;	
 	}
 
-	private Object3d getOwner() {
+	public Object3d getOwner() {
 		return owner;		
 	}
 
+	@Override
+	public void apply() {
+		if(!cashed)
+			cache();
+		glPushMatrix();
+		if(isAbsolyte())
+			glLoadIdentity();
+		glMultMatrix(cash);	
+	}
 
+	@Override
+	public void unApply() {
+		glPopMatrix();
+	}
+
+	public void loadFromOpenGL() {
+		glLoadMatrix(cash);
+		matrix.load(cash);
+		cash.flip();
+	}
 
 }

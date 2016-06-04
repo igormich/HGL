@@ -1,15 +1,52 @@
 package properties;
 
+import static org.lwjgl.opengl.GL11.GL_COMPILE;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glCallList;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glDeleteLists;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glEndList;
+import static org.lwjgl.opengl.GL11.glNewList;
+import static org.lwjgl.opengl.GL11.glNormal3f;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glVertex3f;
+
+import java.util.ArrayList;
+
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
+
+import com.bulletphysics.util.ObjectArrayList;
+
 import base.Object3d;
+import base.RenderContex;
 import materials.Material;
 import materials.MaterialLibrary;
 import materials.Textured;
 
 public class Mesh implements Property3d,Textured {
 
+	public static final int NONE=0;
+	public static final int TEXTURE=1;
+	public static final int NORMAL=2;
+	public static final int COLOR=4;
+	public static final int ALL=TEXTURE+NORMAL+COLOR;
+	private static int globalId=1;
+	
 	private Material material;
 	private String materialName;
 	private MaterialLibrary materialLibrary;
+	
+	public ArrayList<Vector3f> vert=new ArrayList<Vector3f>();
+	public ArrayList<Vector3f> normals=new ArrayList<Vector3f>();
+	public ArrayList<Vector3f> color=new ArrayList<Vector3f>();
+	public ArrayList<Vector2f> tex=new ArrayList<Vector2f>();
+	public int renderParts=ALL;
+	public String fileName="File not found";
+	protected int listId=-1;
+	boolean isPrepared=false;
 
 	@Override
 	public void setMaterial(Material material) {
@@ -54,22 +91,84 @@ public class Mesh implements Property3d,Textured {
 	}
 	@Override
 	public void render(RenderContex renderContex,Object3d owner) {
-		if(renderContex.storeTransparent()&&(getMaterial().isTransparent()))
-			renderContex.store(this);
-		if(renderContex.skipTransparent()&&(getMaterial().isTransparent()))
-			return;
-		if(renderContex.useMaterial())
+		Material material=getMaterial();
+		if(material!=null)
 		{
-			getMaterial().apply(owner);
+			if(renderContex.storeTransparent()&&(material.isTransparent()))
+				renderContex.store(this);
+			if(renderContex.skipTransparent()&&(material.isTransparent()))
+				return;
+			if(renderContex.useMaterial())
+			{
+				material.apply(owner);
+			}
 		}
 		renderMesh();
-		if(renderContex.useMaterial())
+		if(renderContex.useMaterial()&&material!=null)
 		{
-			getMaterial().unApply();
+			material.unApply();
 		}
 	}
 
 	private void renderMesh() {
+		if(!isPrepared)
+			prepare();
+		glCallList(listId);
+	}
+	
+	public String toString(){
+		return fileName;
+	}
+	public Mesh(){
+		super();
+		listId=getId();
+	}
+	private static int getId() {
+		return globalId++;
+	}
+
+	public ObjectArrayList<Vector3f> trinaglesList(){
+		ObjectArrayList<Vector3f> result=new ObjectArrayList<Vector3f>();
+			for(Vector3f v:vert){
+				result.add(v);
+			}
+		return result;		
+	}
+	
+	public void add(Vector3f v,Vector3f n,Vector3f c, Vector2f t) {
+		if(v!=null)vert.add(v);
+		if(n!=null)normals.add(n);
+		if(c!=null)color.add(c);
+		if(t!=null)tex.add(t);
+		isPrepared=false;
+	}
+	
+	protected void renderPoint(int i) {
+		if((renderParts & TEXTURE)>0)
+			glTexCoord2f(tex.get(i).x,tex.get(i).y);
+		if((renderParts & NORMAL)>0)
+			glNormal3f(normals.get(i).x,normals.get(i).y,normals.get(i).z);
+		if((renderParts & COLOR)>0)
+			glColor3f(color.get(i).x,color.get(i).y,color.get(i).z);
+		glVertex3f(vert.get(i).x,vert.get(i).y,vert.get(i).z);
+		Vector3f p=vert.get(i);
 		
 	}
+	
+	public void prepare() {
+		if(listId>-1)
+			glDeleteLists(listId, 1);
+		glNewList(listId, GL_COMPILE);
+		glBegin(GL_TRIANGLES);
+		for(int i=0;i<vert.size();i++){
+			renderPoint(i);
+		}
+		glEnd();
+		glEndList();
+		vert.clear();
+		color.clear();
+		normals.clear();
+		tex.clear();
+		isPrepared=true;
+	}	
 }

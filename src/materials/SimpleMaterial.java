@@ -68,6 +68,7 @@ public class SimpleMaterial implements Material{
 		this.blendFunc=blendFunc;	
 	}
 	public void apply(Object3d owner) {
+		
 		if(!isColorWrite())
 			glColorMask(false, false, false, false);
 		else
