@@ -3,6 +3,7 @@ package properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import base.Object3d;
 import materials.Material;
 import materials.MaterialLibrary;
 
@@ -31,7 +32,8 @@ public class MultiMesh implements Property3d {
 	public void setMaterialNameForAll(String materialName){
 		meshes.forEach(mesh -> mesh.setMaterialName(materialName));
 	}
-	public void render(RenderContex renderContex) {
-		meshes.forEach(mesh -> mesh.render(renderContex));
+	@Override
+	public void render(RenderContex renderContex,Object3d owner) {
+		meshes.forEach(mesh -> mesh.render(renderContex,owner));
 	}
 }

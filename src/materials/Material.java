@@ -1,8 +1,12 @@
 package materials;
 
-import base.Applyable;
+import base.Object3d;
 
 
-public interface Material extends Applyable {
 
+public interface Material {
+	
+	boolean isTransparent();
+	void apply(Object3d owner);
+	void unApply();
 }

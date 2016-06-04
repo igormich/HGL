@@ -7,15 +7,15 @@ public interface Property3d {
 		return false;
 	}
 	//use for scripting
-	default void tick(float deltaTime,float time) {
+	default void tick(float deltaTime,float time,Object3d owner) {
 		//DO NOTHING
 	}
 	//use for visual objects
-	default void render(RenderContex renderContex) {
+	default void render(RenderContex renderContex,Object3d owner) {
 		//DO NOTHING
 	}
 	//use for physics objects
-	default void collision(Object3d otherObject) {
+	default void collision(Object3d owner,Object3d otherObject) {
 		//DO NOTHING
 	}
 }

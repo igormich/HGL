@@ -91,14 +91,14 @@ public class Object3d{
 	public void tick(float deltaTime,float time) {
 		position.apply();
 		getChildren().forEach(child -> child.tick(deltaTime,time));
-		properties.forEach(property -> property.tick(deltaTime, time));
+		properties.forEach(property -> property.tick(deltaTime, time,this));
 		position.unApply();
 	}
 	
 	public void render(RenderContex renderContex){
 		position.apply();
 		getChildren().forEach(child -> child.render(renderContex));
-		properties.forEach(property -> property.render(renderContex));
+		properties.forEach(property -> property.render(renderContex,this));
 		position.unApply();
 	}
 

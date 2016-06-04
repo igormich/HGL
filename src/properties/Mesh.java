@@ -1,5 +1,6 @@
 package properties;
 
+import base.Object3d;
 import materials.Material;
 import materials.MaterialLibrary;
 import materials.Textured;
@@ -52,10 +53,14 @@ public class Mesh implements Property3d,Textured {
 		return materialLibrary;
 	}
 	@Override
-	public void render(RenderContex renderContex) {
+	public void render(RenderContex renderContex,Object3d owner) {
+		if(renderContex.storeTransparent()&&(getMaterial().isTransparent()))
+			renderContex.store(this);
+		if(renderContex.skipTransparent()&&(getMaterial().isTransparent()))
+			return;
 		if(renderContex.useMaterial())
 		{
-			getMaterial().apply();
+			getMaterial().apply(owner);
 		}
 		renderMesh();
 		if(renderContex.useMaterial())
