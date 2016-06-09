@@ -1,10 +1,15 @@
 
+.gitignore
 .metadata
 bin/
 tmp/
+textures/
+models/
 *.tmp
 *.bak
 *.swp
+*.dll
+*.jar
 *~.nib
 local.properties
 .settings/

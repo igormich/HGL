@@ -60,7 +60,7 @@ public class Object3d{
 		return Collections.unmodifiableList(children);
 	}
 	
-	public void add(Property3d property){
+	public Object3d add(Property3d property){
 		if(property.isUnique())
 		{
 			Optional<Property3d> propertyForReplace = properties.stream().filter(p -> p.getClass() == property.getClass()).findAny();
@@ -76,6 +76,7 @@ public class Object3d{
 		{
 			properties.add(property);
 		}
+		return this;
 	}
 	
 	public <T extends Property3d> T get(Class<T> type){

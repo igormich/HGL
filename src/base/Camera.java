@@ -1,15 +1,13 @@
-package properties;
+package base;
 
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
-
-import base.Applyable;
-import base.Object3d;
 
 public class Camera extends Object3d implements Applyable {
 
@@ -22,7 +20,9 @@ public class Camera extends Object3d implements Applyable {
 		glMatrixMode (GL_PROJECTION);								// Select The Projection Matrix
 		glLoadIdentity ();											// Reset The Projection Matrix	
 		//GLU.gluPerspective (angle, param*p, nearPlane, farPlane);
-		GLU.gluPerspective (angle, param, nearPlane, farPlane);
+		float width = Display.getWidth();
+		float height = Display.getHeight();
+		GLU.gluPerspective (angle, param*width/height, nearPlane, farPlane);
 		Matrix4f matrix = getPosition().getAbsoluteMatrix();
 		//System.out.println(matrix);
 		if(target!=null){

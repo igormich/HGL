@@ -39,12 +39,11 @@ public class Mesh implements Property3d,Textured {
 	private String materialName;
 	private MaterialLibrary materialLibrary;
 	
-	public ArrayList<Vector3f> vert=new ArrayList<Vector3f>();
-	public ArrayList<Vector3f> normals=new ArrayList<Vector3f>();
-	public ArrayList<Vector3f> color=new ArrayList<Vector3f>();
-	public ArrayList<Vector2f> tex=new ArrayList<Vector2f>();
-	public int renderParts=ALL;
-	public String fileName="File not found";
+	private ArrayList<Vector3f> vert=new ArrayList<Vector3f>();
+	private ArrayList<Vector3f> normals=new ArrayList<Vector3f>();
+	private ArrayList<Vector3f> color=new ArrayList<Vector3f>();
+	private ArrayList<Vector2f> tex=new ArrayList<Vector2f>();
+	private int renderParts=ALL;
 	protected int listId=-1;
 	boolean isPrepared=false;
 
@@ -95,7 +94,7 @@ public class Mesh implements Property3d,Textured {
 		if(material!=null)
 		{
 			if(renderContex.storeTransparent()&&(material.isTransparent()))
-				renderContex.store(this);
+				renderContex.store(this,owner);
 			if(renderContex.skipTransparent()&&(material.isTransparent()))
 				return;
 			if(renderContex.useMaterial())
@@ -116,9 +115,6 @@ public class Mesh implements Property3d,Textured {
 		glCallList(listId);
 	}
 	
-	public String toString(){
-		return fileName;
-	}
 	public Mesh(){
 		super();
 		listId=getId();
@@ -150,9 +146,7 @@ public class Mesh implements Property3d,Textured {
 			glNormal3f(normals.get(i).x,normals.get(i).y,normals.get(i).z);
 		if((renderParts & COLOR)>0)
 			glColor3f(color.get(i).x,color.get(i).y,color.get(i).z);
-		glVertex3f(vert.get(i).x,vert.get(i).y,vert.get(i).z);
-		Vector3f p=vert.get(i);
-		
+		glVertex3f(vert.get(i).x,vert.get(i).y,vert.get(i).z);	
 	}
 	
 	public void prepare() {
@@ -170,5 +164,9 @@ public class Mesh implements Property3d,Textured {
 		normals.clear();
 		tex.clear();
 		isPrepared=true;
+	}
+
+	public void setRenderParts(int renderParts) {
+		this.renderParts = renderParts;
 	}	
 }

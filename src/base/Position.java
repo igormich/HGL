@@ -16,16 +16,17 @@ public class Position implements Applyable {
 	public static final Vector3f VECTOR_Y = new Vector3f(0, 1, 0);
 	public static final Vector3f VECTOR_Z = new Vector3f(0, 0, 1);
 	
+	private static float SOME_SMALL_VALUE=0.001f;
 	
 	public static float gradToRad(float angle) {
 		return (float) (angle*Math.PI/180);
 	}
 	
-	private float radToGrad(float angle) {
+	public float radToGrad(float angle) {
 		return (float) (angle*180/Math.PI);
 	}
 	
-	public float dist(Vector3f v1,Vector3f v2){
+	public static float dist(Vector3f v1,Vector3f v2){
 		return (float) Math.sqrt((v1.x-v2.x)*(v1.x-v2.x)+(v1.y-v2.y)*(v1.y-v2.y)+(v1.z-v2.z)*(v1.z-v2.z));
 	}
 	
@@ -62,7 +63,7 @@ public class Position implements Applyable {
 		cashed=false;;
 	}
 	
-	//rotate operations
+	//rotate operations, graduses Pi=180
 	public Position turn(float angle){
 		angle=gradToRad(angle);
 		turn+=angle;
@@ -152,6 +153,12 @@ public class Position implements Applyable {
 		return setScale(new Vector3f(x, y, z));
 	}
 	public Position setScale(Vector3f scale){
+		if(Math.abs(scale.x)<SOME_SMALL_VALUE)
+			scale.x=SOME_SMALL_VALUE*Math.signum(scale.x);
+		if(Math.abs(scale.y)<SOME_SMALL_VALUE)
+			scale.y=SOME_SMALL_VALUE*Math.signum(scale.y);
+		if(Math.abs(scale.z)<SOME_SMALL_VALUE)
+			scale.z=SOME_SMALL_VALUE*Math.signum(scale.z);
 		Vector3f temp=new Vector3f(scale.x/this.scale.x,scale.y/this.scale.y,scale.z/this.scale.z);
 		matrix.scale(temp);
 		this.scale=scale;
@@ -171,14 +178,13 @@ public class Position implements Applyable {
 		return new Vector3f(scale);
 	}
 	
-	
 	public float gistanceTo(Object3d object) {
 		return gistanceTo(object.getPosition());
 	}
 	public float gistanceTo(Position position) {
 		return dist(getAbsoluteTranslation(),position.getAbsoluteTranslation());
 	}
-	private Vector3f getAbsoluteTranslation() {
+	public Vector3f getAbsoluteTranslation() {
 		Matrix4f m = getAbsoluteMatrix();		
 		return new Vector3f(m.m30,m.m31,m.m32);
 	}
@@ -208,7 +214,7 @@ public class Position implements Applyable {
 			cache();
 		glPushMatrix();
 		if(isAbsolyte())
-			glLoadIdentity();
+			glLoadIdentity();			
 		glMultMatrix(cash);	
 	}
 
@@ -218,9 +224,9 @@ public class Position implements Applyable {
 	}
 
 	public void loadFromOpenGL() {
-		glLoadMatrix(cash);
-		matrix.load(cash);
-		cash.flip();
+		absolyte=true;
+		cashed=true;
+		glGetFloat(GL_MODELVIEW_MATRIX, cash);
 	}
 
 }
