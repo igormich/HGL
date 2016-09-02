@@ -1,22 +1,6 @@
 package materials;
 
-import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glCompileShader;
-import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.glCreateShader;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
-import static org.lwjgl.opengl.GL20.glGetShaderi;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glShaderSource;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.opengl.GL20.glValidateProgram;
+import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -25,6 +9,7 @@ import java.util.List;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import base.Object3d;
 
@@ -43,13 +28,19 @@ public class Shader extends SimpleMaterial {
         glAttachShader(shaderprogram, fragmentShaderProgram);
         glLinkProgram(shaderprogram);
         glValidateProgram(shaderprogram);
+        int compiled=glGetShaderi(shaderprogram, GL_LINK_STATUS);
+        if(compiled==0)
+        {
+            String log=glGetShaderInfoLog(shaderprogram, LOG_SIZE);
+            System.err.println(this.getClass().getCanonicalName()+" Error compiling the vertex shader: " + new String(log));
+        }
 	}
 
 	private void compileShader(int shaderProgram, String shaderCode) {
 		ByteBuffer bb=BufferUtils.createByteBuffer(shaderCode.length()*2);
         bb.put(shaderCode.getBytes());
         bb.flip();
-        glShaderSource(shaderProgram,bb);
+        glShaderSource(shaderProgram,shaderCode);
         glCompileShader(shaderProgram);
         int compiled=glGetShaderi(shaderProgram, GL_COMPILE_STATUS);
         if(compiled==0)
@@ -92,5 +83,26 @@ public class Shader extends SimpleMaterial {
 			glUniform3f(i,vec3.x,vec3.y,vec3.z);
 		}
 		glUseProgram(0);
+	}
+	
+	public void setUniform(Vector4f vec4, String name) {
+		glUseProgram(shaderprogram);
+		
+		int i=glGetUniformLocation(shaderprogram, name);
+		if(i>-1){
+			glUniform4f(i,vec4.x,vec4.y,vec4.z,vec4.w);
+		}
+		glUseProgram(0);
+	}
+	
+	public void setUniform(float value, String name) {
+		glUseProgram(shaderprogram);
+		
+		int i=glGetUniformLocation(shaderprogram, name);
+		if(i>-1){
+			glUniform1f(i,value);
+		}
+		glUseProgram(0);
+		
 	}
 }

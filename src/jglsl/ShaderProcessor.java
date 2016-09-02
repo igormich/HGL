@@ -60,6 +60,7 @@ public class ShaderProcessor {
 		//remove casting
 		code=code.replaceAll("\\("+packageName+".Vec\\d?\\)", "");
 		code=code.replaceAll("\\("+packageName+".Sampler\\d?D\\)", "");
+		code=code.replaceAll("\\("+packageName+".Mat\\d?\\)", "");
 		//remove "this."
 		code=code.replaceAll("this\\.", "");
 		//remove Float boxing
@@ -68,7 +69,9 @@ public class ShaderProcessor {
 		
 		//remove class.path and replace upper Letter
 		code=code.replaceAll(packageName+"\\.Vec", "vec");
-		code=code.replaceAll("java.lang.Float", "float");
+		code=code.replaceAll("\\(java\\.lang\\..+?\\)", "");
+		code=code.replaceAll("java\\.lang\\.Float", "float");
+		code=code.replaceAll("\\(float\\)", "");
 		
 		code=parseAll(code);
 		
@@ -109,7 +112,7 @@ public class ShaderProcessor {
 	public static void main(String[] args) {
 		String vertCode=process(SimpleVertexShader.class);
 		System.out.println(vertCode);
-		String fragCode=process(MaskShader.class);
+		String fragCode=process(MaskFragmentShader.class);
 		System.out.println(fragCode);
 	}
 

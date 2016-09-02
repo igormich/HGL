@@ -14,9 +14,12 @@ import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
+
+import physics.TriangleStrip;
 
 import com.bulletphysics.util.ObjectArrayList;
 
@@ -26,8 +29,12 @@ import materials.Material;
 import materials.MaterialLibrary;
 import materials.Textured;
 
-public class Mesh implements Property3d,Textured {
+public class Mesh implements Property3d,Textured,TriangleStrip {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -460385300096058453L;
 	public static final int NONE=0;
 	public static final int TEXTURE=1;
 	public static final int NORMAL=2;
@@ -168,5 +175,16 @@ public class Mesh implements Property3d,Textured {
 
 	public void setRenderParts(int renderParts) {
 		this.renderParts = renderParts;
+	}
+
+	@Override
+	public Iterator<Vector3f> iterator() {
+		return vert.iterator();
+	}
+
+	@Override
+	public int getSize() {
+		return vert.size();
 	}	
+	
 }

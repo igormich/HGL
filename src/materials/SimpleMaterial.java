@@ -26,7 +26,12 @@ public class SimpleMaterial implements Material{
 	private boolean colorWrite=true;	
 	private boolean zWrite=true;	
 	
-	
+	public SimpleMaterial() {
+
+	}
+	public SimpleMaterial(float r, float g, float b) {
+		setColor(r, g, b);
+	}
 	public void setColor(float r,float g,float b,float a){
 		this.r=r;
 		this.g=g;
@@ -143,6 +148,7 @@ public class SimpleMaterial implements Material{
 	public void unApply() {
 		
 	}
+
 
 	
 }

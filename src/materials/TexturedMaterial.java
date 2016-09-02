@@ -27,4 +27,8 @@ public class TexturedMaterial extends SimpleMaterial {
 		texture.unApply();
 	}
 
+	public Texture getTexture() {
+		return texture;
+	}
+
 }

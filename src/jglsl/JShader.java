@@ -2,8 +2,7 @@ package jglsl;
 
 public abstract class JShader {
 	
-	protected Float max(Float a,Float b) {return null;}
-	protected Float min(Float a,Float b) {return null;}
+	
 	
 	protected Float add(Float a,Float b) {return null;}
 	protected Float sub(Float a,Float b) {return null;}
@@ -12,6 +11,9 @@ public abstract class JShader {
 	
 	protected Float sin(Float a) {return null;}
 	protected Float cos(Float a) {return null;}
+	protected Float max(Float a,Float b) {return null;}
+	protected Float min(Float a,Float b) {return null;}
+	protected Float clamp(Float a,Float min,Float max) {return null;}
 	
 	protected Vec2 add(Vec2 a,Vec2 b) {return null;}
 	protected Vec2 add(Float a,Vec2 b) {return null;}
@@ -91,6 +93,9 @@ public abstract class JShader {
 	protected Mat3 mul(Mat3 a,Mat3 b) {return null;}
 	protected Vec3 mul(Mat3 a,Vec3 b) {return null;}
 	
+	protected Mat3 inverse(Mat3 m) {return null;}
+	protected Mat4 inverse(Mat4 m) {return null;}
+	
 	protected Vec2 vec2(Float x,Float y) {return null;}
 	protected Vec2 vec2(Vec3 v) {return null;}
 	protected Vec2 vec2(Vec4 v) {return null;}
@@ -106,6 +111,10 @@ public abstract class JShader {
 	
 	protected Vec4 texture2D(Sampler2D colorTexture, Vec2 ts) {return null;}
 	protected Vec4 texture2D(Sampler2D colorTexture, Vec2 ts,Float bias) {return null;}
+	
+	protected Vec4 texture3D(Sampler3D colorTexture, Vec3 xyz) {return null;}
+	protected Vec4 texture3D(Sampler3D colorTexture, Vec3 xyz,Float bias) {return null;}
+	
 	
 	public abstract void main(); 
 	

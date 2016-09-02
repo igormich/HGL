@@ -1,34 +1,46 @@
 package examples;
 
-import static org.lwjgl.opengl.GL11.*;
-import io.MeshLoaderSMD;
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DST_COLOR;
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11.GL_NICEST;
+import static org.lwjgl.opengl.GL11.GL_PERSPECTIVE_CORRECTION_HINT;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_SRC_COLOR;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glClearDepth;
+import static org.lwjgl.opengl.GL11.glClearStencil;
+import static org.lwjgl.opengl.GL11.glCullFace;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glHint;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glShadeModel;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
-import jglsl.MaskFragmentShader;
-import jglsl.ShaderProcessor;
-import jglsl.SimpleVertexShader;
-import materials.Shader;
-import materials.SimpleMaterial;
-import materials.Texture2D;
-import materials.TexturedMaterial;
-
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.vector.Matrix4f;
 
-import properties.Mesh;
-import properties.MultiMesh;
-import utils.PrimitiveFactory;
 import base.Camera;
 import base.Object3d;
 import base.Scene;
+import io.MeshLoaderSMD;
+import jglsl.ShaderProcessor;
+import materials.Shader;
+import materials.Texture3D;
+import properties.MultiMesh;
 
 
-public class Test0 {
+public class Test1 {
 	public static void initDisplay(int w,int h,boolean fullscreen) {
 		try {
 			Dimension screenSize = new Dimension(w, h);
@@ -81,46 +93,23 @@ public class Test0 {
 		Camera camera=new Camera();
 		camera.getPosition().setTranslation(0, 5, 0).pitch(90).turn(90);;
 		
-		Mesh mesh = PrimitiveFactory.createPlane(1, 1);
-		TexturedMaterial plasterMaterial = new TexturedMaterial(new Texture2D("textures/plaster_up0.jpg"));
-		plasterMaterial.setBlendMode(SimpleMaterial.TRANSPARENCY);
-		plasterMaterial.setColor(1, 1, 1, 0.5f);
-		mesh.setMaterial(plasterMaterial);
-		Object3d plane1=new Object3d();
-		plane1.add(mesh);
-		plane1.getPosition().move(1,0,0);
-		scene.add(plane1);
-		
-		Object3d plane2=new Object3d();
-		plane2.add(mesh);
-		plane2.getPosition().pitch(180).move(0, 0.5f, 0.1f);
-		plane1.addChild(plane2);
-		
-		Object3d plane3=new Object3d();
-		plane3.add(mesh);
-		plane3.getPosition().pitch(180).move(0, 1, -0.1f);
-		plane1.addChild(plane3);
 		
 		MultiMesh cubeMesh = MeshLoaderSMD.loadMultiMesh("models/test_cube", null, false);
 		Object3d cube = scene.add(cubeMesh);
 		cube.getPosition().roll(45).turn(45);
-		Shader cubeTexture=ShaderProcessor.build(SimpleVertexShader.class, MaskFragmentShader.class);
-		cubeTexture.addTexture(plasterMaterial.getTexture(), "color1Texture");
-		cubeTexture.addTexture(new Texture2D("textures/rust1.jpg"), "color2Texture");
-		cubeTexture.addTexture(new Texture2D("textures/mask.jpg"), "maskTexture");
-		cubeTexture.setUniform(camera.getPosition().getAbsoluteTranslation(),"lightPosU");
+		Shader cubeTexture=ShaderProcessor.build(VoxVertexShader.class, VoxFragmentShader.class);
+		//cubeTexture.setBlendMode(SimpleMaterial.TRANSPARENCY);
+		cubeTexture.addTexture(new Texture3D(), "voxData");
+		
 		cubeMesh.setMaterialForAll(cubeTexture);
-		float textureShiftY=0;
+
+
 		while(!Display.isCloseRequested())
 		{
-			if(Keyboard.isKeyDown(Keyboard.KEY_Z))
-				plasterMaterial.setBlendMode(SimpleMaterial.OPAQUE);
-			if(Keyboard.isKeyDown(Keyboard.KEY_X))
-				plasterMaterial.setBlendMode(SimpleMaterial.ADDITIVE);
-			cubeTexture.setUniform(textureShiftY,"textureShiftY");
-			textureShiftY+=0.01f;
-			plane1.getPosition().pitch(1);
-			cube.getPosition().pitch(0.1f);
+			Matrix4f matrix = cube.getPosition().getAbsoluteMatrix();
+			//Vector4f dir=new Vector3f(0, 0, 1, 0);
+			cubeTexture.setUniform(camera.getPosition().getAbsoluteTranslation(),"lightPosU");
+			cube.getPosition().pitch(1f);
 			scene.render(camera);
 			Display.update();
 			Display.sync(60);

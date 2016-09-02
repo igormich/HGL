@@ -1,6 +1,6 @@
 package jglsl;
 
-public class MaskShader extends JFragmentShader {
+public class MaskFragmentShader extends JFragmentShader {
 
 	@Uniform
 	Sampler2D color1Texture;
@@ -8,17 +8,21 @@ public class MaskShader extends JFragmentShader {
 	Sampler2D color2Texture;
 	@Uniform
 	Sampler2D maskTexture;
+	@Uniform
+	Float textureShiftY;
+	
 	@Varying
-	protected final Vec4 texCoord=null;
+	Vec4 texCoord;
 	@Varying
-	protected final Vec3 normal=null;
+	Vec3 normal;
 	@Varying
-	protected final Vec3 lightPos=null;
+	Vec3 lightPos;
+	
 	@Override
 	public void main() {
 		Vec4 color1 = texture2D(color1Texture,texCoord.ts);
-		Vec4 color2 = texture2D(color2Texture,texCoord.ts);
-		Float mask = texture2D(maskTexture,texCoord.ts).r;
+		Vec4 color2 = texture2D(color2Texture,add(texCoord.ts,vec2(textureShiftY,0f)));
+		Float mask = texture2D(maskTexture,add(texCoord.ts,sin(textureShiftY)*0.1f)).r;
 		Vec3 normalN=normalize(normal);
 		Vec3 lightPosN=normalize(lightPos);
 		Vec4 diffColor=add(mul(color1,mask),mul(color2,1-mask));

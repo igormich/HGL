@@ -10,11 +10,13 @@ import static org.lwjgl.opengl.GL11.glMultMatrix;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL11.glGetFloat;
 
+import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
 
 
 
@@ -35,9 +37,14 @@ import org.lwjgl.util.vector.Vector3f;
 import properties.MultiMesh;
 import properties.Property3d;
 
-public class Scene {
-	private class SceneRenderContex implements RenderContex {
+public class Scene implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1385416712044074843L;
+	private class SceneRenderContex implements RenderContex,Serializable {
 
+		private static final long serialVersionUID = 2713269682366763140L;
 		private boolean useMaterial=true;
 		private boolean skipTransparent=true;
 		private boolean selectMode;
@@ -112,9 +119,13 @@ public class Scene {
 	private Object3d root=new Object3d();
 	private SceneRenderContex renderContex=new SceneRenderContex();
 	private List<TransparentContainer> transparentPool=new ArrayList<TransparentContainer>();
+	private float time;
 	
 	public Object3d add(Object3d object3d){
 		return root.addChild(object3d);
+	}
+	public void remove(Object3d object3d){
+		root.removeChild(object3d);
 	}
 	public void render(Camera camera){
 		int width = Display.getWidth();
@@ -148,5 +159,12 @@ public class Scene {
 			result.add(property);
 		add(result);
 		return result;		
+	}
+	public void tick(float deltaTime) {
+		time+=deltaTime;
+		root.tick(deltaTime, time);
+	}
+	public Object3d getByID(int id) {
+		return root.getByID(id);
 	}
 }

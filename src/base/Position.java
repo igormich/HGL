@@ -2,6 +2,7 @@ package base;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.io.Serializable;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -9,9 +10,13 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 
-public class Position implements Applyable {
+public class Position implements Applyable,Serializable {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9028483454077986045L;
 	public static final Vector3f VECTOR_X = new Vector3f(1, 0, 0);
 	public static final Vector3f VECTOR_Y = new Vector3f(0, 1, 0);
 	public static final Vector3f VECTOR_Z = new Vector3f(0, 0, 1);
@@ -188,7 +193,23 @@ public class Position implements Applyable {
 		Matrix4f m = getAbsoluteMatrix();		
 		return new Vector3f(m.m30,m.m31,m.m32);
 	}
-
+	public float[] getAbsoluteMatrixAsArray() {
+		Matrix4f matrix=getAbsoluteMatrix();
+		FloatBuffer buf=BufferUtils.createFloatBuffer(16);
+		matrix.store(buf);
+		buf.flip();	
+		float[] dst=new float[16];
+		buf.get(dst, 0, 15);
+		return dst;
+	}
+	public synchronized void setAbsoluteMatrixAsArray(float[] array) {
+		setAbsolyte(true);
+		cash.put(array);
+		cash.flip();
+		matrix.load(cash);
+		cash.flip();
+		cashed=true;
+	}
 	public Matrix4f getAbsoluteMatrix() {
 		if(isAbsolyte()){
 			return new Matrix4f(matrix);
@@ -227,6 +248,12 @@ public class Position implements Applyable {
 		absolyte=true;
 		cashed=true;
 		glGetFloat(GL_MODELVIEW_MATRIX, cash);
+	}
+
+	public Vector3f getFrontVector() {
+		//left
+		//return new Vector3f(new Vector3f(matrix.m00, matrix.m10, matrix.m20));
+		return new Vector3f(new Vector3f(matrix.m01, matrix.m11, matrix.m21));
 	}
 
 }

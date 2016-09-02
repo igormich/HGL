@@ -26,10 +26,8 @@ public class Decompiler {
 	//copied from decompiled CFR jar, only output replaced
 	private static String doClass(DCCommonState dcCommonState, String path, DumperFactory dumperFactory,String methname) {
         Options options = dcCommonState.getOptions();
-        IllegalIdentifierDump illegalIdentifierDump = IllegalIdentifierDump.Factory.get((Options)options);
         ToStringDumper d = new ToStringDumper();
         try {
-            NopSummaryDumper summaryDumper = new NopSummaryDumper();
             ClassFile c = dcCommonState.getClassFileMaybePath(path);
             dcCommonState.configureWith(c);
             try {
@@ -37,12 +35,6 @@ public class Decompiler {
             }
             catch (CannotLoadClassException e) {
                 // empty catch block
-            }
-            if (((Boolean)options.getOption((PermittedOptionProvider.ArgumentParam)OptionsImpl.DECOMPILE_INNER_CLASSES)).booleanValue()) {
-                c.loadInnerClasses(dcCommonState);
-            }
-            if (((Boolean)options.getOption((PermittedOptionProvider.ArgumentParam)OptionsImpl.RENAME_DUP_MEMBERS)).booleanValue()) {
-                MemberNameResolver.resolveNames((DCCommonState)dcCommonState, (Collection)ListFactory.newList((Collection)dcCommonState.getClassCache().getLoadedTypes()));
             }
             c.analyseTop(dcCommonState);
             TypeUsageCollector collectingDumper = new TypeUsageCollector(c);
@@ -93,12 +85,12 @@ public class Decompiler {
     }
 	//copied from decompiled CFR jar
 	public static String decompile(String pathToFile,String methname) {
-	  GetOptParser getOptParser = new GetOptParser();
-	  Options options = (Options)getOptParser.parse(new String[]{pathToFile}, OptionsImpl.getFactory());
-	  ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
-	  DCCommonState dcCommonState = new DCCommonState(options, (ClassFileSource)classFileSource);
-	  DumperFactoryImpl dumperFactory = new DumperFactoryImpl();
-	  return doClass(dcCommonState, pathToFile, (DumperFactory)dumperFactory,methname);
+		GetOptParser getOptParser = new GetOptParser();
+		Options options = (Options)getOptParser.parse(new String[]{pathToFile}, OptionsImpl.getFactory());
+		ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
+		DCCommonState dcCommonState = new DCCommonState(options, (ClassFileSource)classFileSource);
+		DumperFactoryImpl dumperFactory = new DumperFactoryImpl();
+		return doClass(dcCommonState, pathToFile, (DumperFactory)dumperFactory,methname);
 	}
 	public static String decompile(Class<?> clazz,String methname) {
 		return decompile("bin/"+clazz.getCanonicalName().replace('.', '/')+".class",methname);
@@ -106,8 +98,8 @@ public class Decompiler {
 	public static String decompile(Class<?> clazz) {
 		return decompile(clazz,null);
 	}
-	public static void main(String[] arg){
+	/*public static void main(String[] arg){
 	  //decompile this class file
 		System.out.println(decompile(Decompiler.class));
-	}
+	}*/
 }
