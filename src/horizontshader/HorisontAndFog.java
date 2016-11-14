@@ -23,7 +23,7 @@ public class HorisontAndFog {
 		throw new IllegalArgumentException();
 	}
 	public static void main(String[] args) throws Exception {
-		float horisontCoeff = 0.1f;
+		float horisontCoeff = 0.01f;
 		Utils.initDisplay(512,512,false);
 		Scene scene=new Scene();
 		Camera camera=new Camera();
@@ -59,8 +59,8 @@ public class HorisontAndFog {
 				
 			}
 		test_cube.setMaterialForAll(horisont1);
-		for(int x=0;x<5;x+=1)
-			for(int y=0;y<5;y+=1)
+		for(int x=0;x<10;x+=1)
+			for(int y=0;y<10;y+=1)
 				scene.add(test_cube).getPosition().move(-90+x*25, -25-y*25, -3).setScale(2);
 		Property3d script=new Property3d() {
 			@Override
@@ -75,9 +75,9 @@ public class HorisontAndFog {
 		while(!Display.isCloseRequested())
 		{		
 			if((Keyboard.isKeyDown(Keyboard.KEY_UP))&&(horisontCoeff<1))
-				horisontCoeff+=0.01;
+				horisontCoeff+=0.001;
 			if((Keyboard.isKeyDown(Keyboard.KEY_DOWN))&&(horisontCoeff>0))
-				horisontCoeff-=0.01;
+				horisontCoeff-=0.001;
 			horisont1.setUniform(horisontCoeff, "horisontCoeffU");
 			horisont2.setUniform(horisontCoeff, "horisontCoeffU");
 			Display.setTitle(""+horisontCoeff);

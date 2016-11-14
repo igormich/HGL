@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import properties.Mesh;
 import properties.Property3d;
 
 public class Object3d implements Serializable{
@@ -24,6 +25,11 @@ public class Object3d implements Serializable{
 	private List<Property3d> properties = new ArrayList<Property3d>();
 	
 		
+	public Object3d(Property3d ... properties) {
+		for(Property3d property:properties)
+			add(property);
+	}
+
 	public Position getPosition() {
 		return position;
 	}

@@ -24,6 +24,7 @@ public class HorisontVertexShader extends JVertexShader {
 		Vec3 position3 = vec3(position);
 		Vec3 noZComponent=vec3(1f,1f,0f);
 		float hdist = distance(mul(position3,noZComponent),mul(cameraPosU,noZComponent))*horisontCoeffU;
+		hdist = hdist * hdist;
 		dist = distance(position3,cameraPosU);
 		normal = normalize(mul(gl_NormalMatrix,gl_Normal));
 		lightPos = normalize(sub(lightPosU, position3));

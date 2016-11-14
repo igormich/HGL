@@ -1,7 +1,9 @@
 package jglsl;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.benf.cfr.reader.api.ClassFileSource;
+import org.benf.cfr.reader.bytecode.analysis.types.JavaRefTypeInstance;
 import org.benf.cfr.reader.entities.ClassFile;
 import org.benf.cfr.reader.entities.Method;
 import org.benf.cfr.reader.relationship.MemberNameResolver;
@@ -25,7 +27,7 @@ import org.benf.cfr.reader.util.output.ToStringDumper;
 public class Decompiler {
 	//copied from decompiled CFR jar, only output replaced
 	private static String doClass(DCCommonState dcCommonState, String path, DumperFactory dumperFactory,String methname) {
-        Options options = dcCommonState.getOptions();
+        //Options options = dcCommonState.getOptions();
         ToStringDumper d = new ToStringDumper();
         try {
             ClassFile c = dcCommonState.getClassFileMaybePath(path);
@@ -42,6 +44,11 @@ public class Decompiler {
             // original code commented
             //d = dumperFactory.getNewTopLevelDumper(options, c.getClassType(), (SummaryDumper)summaryDumper, collectingDumper.getTypeUsageInformation(), illegalIdentifierDump);
             //String methname = (String)options.getOption((PermittedOptionProvider.ArgumentParam)OptionsImpl.METHODNAME);
+            Collection<JavaRefTypeInstance> types = new ArrayList<>();
+            types.addAll(c.getConstantPool().getClassCache().getLoadedTypes());
+            types.forEach(ref -> System.out.println(ref));
+            //types.stream().filter(ref -> ref!=null).filter(ref -> ref.getClassFile()!=null)
+            //.forEach(ref -> System.out.println(ref.getClassFile().getFilePath()));
             if (methname == null) {
                 c.dump(d);
             } else {
@@ -84,7 +91,7 @@ public class Decompiler {
 		return null;
     }
 	//copied from decompiled CFR jar
-	public static String decompile(String pathToFile,String methname) {
+	public static String decompile(String pathToFile, String methname) {
 		GetOptParser getOptParser = new GetOptParser();
 		Options options = (Options)getOptParser.parse(new String[]{pathToFile}, OptionsImpl.getFactory());
 		ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
@@ -92,7 +99,7 @@ public class Decompiler {
 		DumperFactoryImpl dumperFactory = new DumperFactoryImpl();
 		return doClass(dcCommonState, pathToFile, (DumperFactory)dumperFactory,methname);
 	}
-	public static String decompile(Class<?> clazz,String methname) {
+	public static String decompile(Class<?> clazz, String methname) {
 		return decompile("bin/"+clazz.getCanonicalName().replace('.', '/')+".class",methname);
 	}
 	public static String decompile(Class<?> clazz) {
