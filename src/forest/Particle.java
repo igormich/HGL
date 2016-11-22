@@ -31,7 +31,7 @@ public class Particle extends Object3d {
 	}
 	public static void main(String[] args) throws Exception {
 		float horisontCoeff = 0.01f;
-		Utils.initDisplay(512,512,false);
+		Utils.initDisplay(900,900,false);
 		Scene scene=new Scene();
 		Camera camera=new Camera();
 		camera.farPlane=1000;
@@ -43,7 +43,8 @@ public class Particle extends Object3d {
 		shader.setBlendMode(SimpleMaterial.TRANSPARENCY);
 		spritePlane.setMaterial(shader);
 		
-		Object3d box=new Object3d();
+		Mesh base = Plane.build();
+		Object3d box=new Object3d(base).getPosition().turn(90).getOwner();
 		scene.add(box);
 		Random r=new Random();
 		Property3d spriteContoller = new Property3d() {
@@ -58,14 +59,14 @@ public class Particle extends Object3d {
 					pos.z=r.nextFloat()-0.5f;
 					particle.liveTime = 0;
 				} else {
-					pos.z+=deltaTime*(2-particle.liveTime);
+					pos.y+=deltaTime*(2-particle.liveTime);
 					//pos.x*=1.01f;
 					//pos.y*=1.01f;
 					pos.x-=deltaTime;
-					pos.y*=1.005f;
+					pos.z*=1.005f;
 					particle.liveTime+=deltaTime;
 				}
-				owner.getPosition().setTranslation(pos).setScale(0.1f+0.1f*pos.z).pitch(10);
+				owner.getPosition().setTranslation(pos).setScale(0.1f+0.05f*particle.liveTime).pitch(10);
 			}
 
 			@Override
@@ -93,9 +94,9 @@ public class Particle extends Object3d {
 		{	
 			long time=System.currentTimeMillis();
 			if(Keyboard.isKeyDown(Keyboard.KEY_A))
-				box.getPosition().pitch(1);
+				box.getPosition().roll(1);
 			if(Keyboard.isKeyDown(Keyboard.KEY_D))
-				box.getPosition().pitch(-1);
+				box.getPosition().roll(-1);
 			camera.tick(1f/60, 0);
 			PhysicController.getDefault().step(1f/60, 10);
 			scene.tick(1f/60);
