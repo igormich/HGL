@@ -65,10 +65,13 @@ public class ShaderProcessor {
 		code=code.replaceAll("this\\.", "");
 		//remove Float boxing
 		code=code.replaceAll("java.lang.Float.valueOf", "");
+		code=code.replaceAll("\\(int\\)", "");
 		code=code.replaceAll("\\.floatValue\\(\\)", "");
 		
 		//remove class.path and replace upper Letter
 		code=code.replaceAll(packageName+"\\.Vec", "vec");
+		code=code.replaceAll(packageName+"\\.Mat", "mat");	
+		code=code.replaceAll("\\.get\\((\\d+?)\\)", "[$1]");
 		code=code.replaceAll("\\(java\\.lang\\..+?\\)", "");
 		code=code.replaceAll("java\\.lang\\.Float", "float");
 		code=code.replaceAll("\\(float\\)", "");

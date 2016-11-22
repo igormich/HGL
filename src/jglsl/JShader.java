@@ -115,6 +115,11 @@ public abstract class JShader {
 	protected Vec4 texture3D(Sampler3D colorTexture, Vec3 xyz) {return null;}
 	protected Vec4 texture3D(Sampler3D colorTexture, Vec3 xyz,Float bias) {return null;}
 	
+	protected Mat4 mat4(Float value){return null;}
+	protected Mat3 mat3(Float value){return null;}
+	
+	protected Mat3 mat3(Vec3 col1,Vec3 col2,Vec3 col3){return null;}
+	protected Mat4 mat4(Vec4 col1,Vec4 col2,Vec4 col3,Vec4 col4){return null;}
 	
 	public abstract void main(); 
 	
